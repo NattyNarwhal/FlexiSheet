@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSFormula.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-SEP-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -40,17 +40,32 @@
 
 #import <Foundation/Foundation.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSSelection, FSKeySetSelection, FSTable, FSKeyGroup, FSKeySet;
+@class FSFormulaSelection, FSFormulaDefinition, FSFormulaSpace;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSFormula : NSObject {
+    FSTable             *_table;          /*" Table this formula belongs to.  Not retained. "*/
+    FSFormulaSelection  *_selection;      /*" The left side of the formula. "*/
+    FSFormulaDefinition *_definition;     /*" The right side of the formula. "*/
+    NSArray             *_skipElements;   /*" The SKIP part of the formula.  Type: FSKeySet. "*/
+    FSKeyGroup          *_recurseGroup;   /*" The group all [THIS|PREV|etc] must reference. "*/
+    NSString            *_originalString; /*" String this formula was created with. "*/
+    FSSelection         *_touchedSel;     /*" Cached from last calculation. "*/
+}
+
++ (FSFormula*)formulaWithString:(NSString*)formulaString inTable:(FSTable*)table;
+
+- (id)initWithString:(NSString*)formulaString inTable:(FSTable*)table;
+
+- (void)replaceFormulaWithString:(NSString*)formulaString;
+
+- (NSArray*)selectedKeySets;
+- (FSSelection*)touchedSelection;
+- (void)setTouchedSelection:(FSSelection*)sel;
+
+- (id)formulaValueForKeySet:(FSKeySet*)keySet;
+
+- (BOOL)isOK;
+- (NSString*)errorString;
+
+@end

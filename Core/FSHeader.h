@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSHeader.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 29-JAN-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,32 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
-
-#import <FSLog.h>
-#import <FSTable.h>
 #import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@class FSDocument, FSTable, FSGlobalHeader, FSKey;
+
+@interface FSHeader : FSKeyGroup
+{
+    FSTable         *_table;     /*" The table this header belongs to.  Not retained! "*/
+    FSGlobalHeader  *_global;    /*" The global header this one belongs to.  Usually nil. "*/
+}
+
+// Creation
++ (FSHeader*)headerNamed:(NSString*)aName;
+
+// Attributes
+- (void)setTable:(FSTable*)table;
+
+// Cloning
+- (FSHeader*)cloneForTable:(FSTable*)otherTable;
+- (FSHeader*)linkedHeaderInTable:(FSTable*)table;
+- (FSGlobalHeader*)globalHeader;
+- (void)setGlobalHeader:(FSGlobalHeader*)globalHeader;
+
+@end
+
+@interface FSKeyGroup (Archiving)
+
+- (NSDictionary*)dictionaryForArchiving;
+
+@end

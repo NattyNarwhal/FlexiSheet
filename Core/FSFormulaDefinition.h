@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSFormulaDefinition.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-SEP-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -40,17 +40,21 @@
 
 #import <Foundation/Foundation.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSTable, FSKeySet, FSSelection, FSFormulaSpace, FSExpression;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSFormulaDefinition : NSObject {
+    NSString           *_creator;
+    FSExpression       *_expression;
+}
+
++ (FSFormulaDefinition*)formulaDefinitionWithString:(NSString*)definitionString inTable:(FSTable*)table;
+- (id)initWithString:(NSString*)definitionString inTable:(FSTable*)table;
+
+- (BOOL)isError;
+
+- (NSArray*)validateCandidateKeySets:(NSArray*)candiates;
+- (id)formulaValueForKeySet:(FSKeySet*)keySet;
+
+- (FSSelection*)referencedSelectionInFormulaSpace:(FSFormulaSpace*)fs;
+
+@end

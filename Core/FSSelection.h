@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSSelection.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 02-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,51 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSKeySet, FSHeader, FSKeyRange;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSSelection : NSObject
+{
+    // One of the following must be nil at all times.
+    NSMutableDictionary  *_rangeForHeader; // Maps FSKeyRange objects to FSHeaders by name.
+    NSMutableArray       *_keySets;        // contains FSKeySet objects building the selection.
+}
+
+// Creating and building selections
++ (FSSelection*)selection;
++ (FSSelection*)selectionWithRanges:(NSArray*)ranges;
++ (FSSelection*)selectionWithKeySets:(NSArray*)keySets;
+
+- (id)initWithRange:(FSKeyRange*)range;
+- (id)initWithRanges:(NSArray*)ranges;
+- (id)initWithKeySets:(NSArray*)keySets;
+
+// Editing a selection
+- (BOOL)extendWithKeySets:(NSArray*)keySets;
+- (BOOL)extendWithRange:(FSKeyRange*)range;
+
+- (int)headerCount;
+- (NSArray*)ranges;
+- (NSArray*)rangesForHeader:(FSHeader*)aHeader;
+
+- (NSArray*)completeKeySets;
+- (BOOL)intersectsWithSelection:(FSSelection*)otherSelection;
+- (BOOL)containsKeySet:(FSKeySet*)set;
+- (NSArray*)selectedKeySets;
+
+- (BOOL)isEmpty;
+- (BOOL)isComplete;
+
+    // Single selection methods
+- (BOOL)isSingleSelection;
+- (id)singleValue;
+
+    // Multiple selection methods
+- (BOOL)isMultipleSelection;
+//- (NSEnumerator*)objectEnumerator;
+- (NSArray*)valuesForBaseSet:(FSKeySet*)baseSet;
+
+    // Creating
+- (NSString*)creatorString;
+
+@end

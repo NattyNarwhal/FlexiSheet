@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSLog.m
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 03-NOV-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,64 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import "FSLog.h"
+#import <Foundation/NSString.h>
+#include <stdio.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+static BOOL _logDebug = NO;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@implementation FSLog
+
++ (void)logDebug:(NSString*)errorStrg,...
+{
+    NSString           *strg;
+    va_list             args;
+    
+    if (!_logDebug) return;
+    
+    va_start(args, errorStrg);
+    strg = [[NSString alloc] initWithFormat:errorStrg arguments:args];
+    fprintf(stdout, [[@"Debug: " stringByAppendingString:strg] UTF8String]);
+    fprintf(stdout, "\n");
+    [strg release];
+}
+
+
++ (void)setLogsDebug:(BOOL)flag
+{
+    _logDebug = flag;
+}
+
+
++ (BOOL)logsDebug
+{
+    return _logDebug;
+}
+
+
++ (void)logInfo:(NSString*)errorStrg,...
+{
+    NSString           *strg;
+    va_list             args;
+    
+    va_start(args, errorStrg);
+    strg = [[NSString alloc] initWithFormat:errorStrg arguments:args];
+    fprintf(stdout, [strg UTF8String]);
+    fprintf(stdout, "\n");
+    [strg release];
+}
+
+
++ (void)logError:(NSString*)errorStrg,...
+{
+    NSString           *strg;
+    va_list             args;
+    
+    va_start(args, errorStrg);
+    strg = [[NSString alloc] initWithFormat:errorStrg arguments:args];
+    fprintf(stdout, [[@"Error: " stringByAppendingString:strg] UTF8String]);
+    fprintf(stdout, "\n");
+    [strg release];
+}
+
+@end

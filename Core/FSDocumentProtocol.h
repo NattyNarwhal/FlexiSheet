@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSDocumentProtocol.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 20-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,23 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import <Foundation/NSObject.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class NSUndoManager;
+@class FSTable, FSGlobalHeader, FSHeader;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@protocol FSDocument <NSObject>
+
+// Table Container
+- (NSArray*)tables;
+- (FSTable*)tableWithName:(NSString*)name;
+
+// Global Category Handling
+- (void)addToGlobalCategories:(FSGlobalHeader*)aGlobalHeader;
+- (void)removeFromGlobalCategories:(FSGlobalHeader*)aGlobalHeader;
+- (NSArray*)globalCategories;
+
+// Undo Management
+- (NSUndoManager*)undoManager;
+
+@end

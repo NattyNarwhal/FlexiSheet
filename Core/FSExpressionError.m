@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSExpressionError.m
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 01-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,40 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import "FSExpressionError.h"
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@implementation FSExpressionError
+/*" An FSExpressionError instance is used instead of the parsed expression
+    when an error is detected during parsing. "*/
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+- (id)initWithErrorMessage:(NSString*)errorString
+{
+    self = [super init];
+    if (self) {
+        _errorString = [errorString copy];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [_errorString release];
+    [super dealloc];
+}
+
++ (FSExpressionError*)expressionError:(NSString*)errorString
+{
+    return [[[FSExpressionError alloc] initWithErrorMessage:errorString] autorelease];
+}
+
+- (id)formulaValueForKeySet:(FSKeySet*)ks
+{
+    return _errorString;
+}
+
+- (NSString*)description
+{
+    return _errorString;
+}
+
+@end

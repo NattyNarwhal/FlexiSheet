@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSValue.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 29-JAN-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,54 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import <FSCore/FSTypes.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSKey, FSKeySet, FSTable, FSFormula;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSValue : NSObject {
+
+@private
+    FSkeyset          _keyset;           /*" The value's key set structure. "*/
+    NSString         *_type;             /*" Type of the value.  Usually a class name. "*/
+    id                _value;            /*" The actual value; an instance of _type. "*/
+    FSFormula        *_valueFormula;     /*" The formula calculating this value. "*/
+    NSArray          *_possibleValues;   /*" Value options, e.g. for boolean values. "*/
+    FSTable          *_table;            /*" Cached reference to the table this value belongs to. "*/
+    NSUndoManager    *_cachedUM;         /*" Cached undo manager; this is retained! "*/
+}
+
+- (id)init;
+- (id)initWithValue:(id)aValue;
+- (id)initWithValue:(id)aValue forKeys:(FSKeySet*)keys;
+
+- (void)setKeys:(FSKeySet*)newKeys;
+- (void)addKey:(FSKey*)someKey;
+- (void)revalidateKeys;
+- (BOOL)hasCompleteKeys;
+
+- (FSKeySet*)keySet;
+- (FSHashKey)hashcode;
+- (BOOL)hashcodeEqualTo:(FSHashKey)aHashcode;
+
+- (NSString*)type;
+
+- (NSComparisonResult)smartCompare:(FSValue*)otherObject;
+- (NSComparisonResult)smartCompareReverse:(FSValue*)otherObject;
+
+- (id)value;
+- (void)setValue:(id)aValue;
+- (void)setValue:(id)newValue postNotification:(BOOL)flag;
+
+- (double)doubleValue;
+- (int)intValue;
+- (NSString*)stringValue;
+
+- (FSFormula*)calculatedByFormula;
+
+@end
+
+@interface FSValue (Archiving)
+
+- (NSDictionary*)dictionaryForArchiving;
+
+@end

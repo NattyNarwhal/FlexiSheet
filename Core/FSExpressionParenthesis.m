@@ -1,11 +1,12 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSExpressionParenthesis.m
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 02-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
+//  
 //  
 //  Redistribution and use in source and binary forms,  with or without
 //  modification,  are permitted provided that the following conditions
@@ -24,6 +25,7 @@
 //     products  derived  from  this software  without specific prior
 //     written permission.
 //  
+//  
 //  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 //  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
 //  LIMITED TO,  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS
@@ -38,19 +40,40 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import "FSExpressionParenthesis.h"
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@implementation FSExpressionParenthesis
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
++ (FSExpression*)parenthesisWithExpression:(FSExpression*)innerExpression
+{
+    FSExpressionParenthesis *instance = [[self alloc] init];
+    instance->_expression = [innerExpression retain];
+    return [instance autorelease];
+}
+
+
+- (void)dealloc
+{
+    [_expression release];
+    [super dealloc];
+}
+
+
+- (id)formulaValueForKeySet:(FSKeySet*)ks
+{
+    return [_expression formulaValueForKeySet:ks];
+}
+
+
+- (FSSelection*)referencedSelectionInFormulaSpace:(FSFormulaSpace*)fs
+{
+    return [_expression referencedSelectionInFormulaSpace:fs];
+}
+
+
+- (NSString*)creatorString
+{
+    return [NSString stringWithFormat:@"(%@)", [_expression creatorString]];
+}
+
+@end

@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSLog.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 03-NOV-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,18 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import <Foundation/NSObject.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+#define TEST_DBG if ([FSLog logsDebug]) 
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSLog : NSObject
+{}
+
++ (void)logDebug:(NSString*)format, ...;
++ (void)setLogsDebug:(BOOL)flag;
++ (BOOL)logsDebug;
+
++ (void)logInfo:(NSString*)format, ...;
++ (void)logError:(NSString*)format, ...;
+
+@end

@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSOperator.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-SEP-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,31 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import <FSExpression.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+typedef enum _FSOperatorTier {
+    FSFirstOperatorTier       = 0,
+    FSDefaultOperatorTier     = FSFirstOperatorTier,
+    FSAddOperatorTier,
+    FSMultOperatorTier,
+    FSRangeOperatorTier,
+    FSMaxOperatorTier         =  FSRangeOperatorTier
+} FSOperatorTier;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSOperator : FSExpression {
+    FSExpression    *_firstArgument;
+    FSExpression    *_secondArgument;
+}
+
+// Methods you can call in FSOperator
++ (void)registerOperator:(Class)operatorClass;
++ (NSArray*)allOperatorSymbols;
++ (Class)operatorClassForSymbol:(NSString*)symbol;
++ (FSOperatorTier)operatorTier;
++ (NSString*)htmlHelpData;
+
+// Implemented by subclasses; don't call in FSOperator
++ (NSString*)operatorSymbol;
++ (FSOperator*)operatorWithArguments:(NSArray*)arguments;
+
+@end

@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSHashMap.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-APR-2002.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -39,18 +39,24 @@
 //  
 
 #import <Foundation/Foundation.h>
+#import <FSCore/FSTypes.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@interface FSHashMap : NSObject
+{
+    void	*sentinel;
+    void 	*rootNode;
+    void 	*minimumNode;
+}
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
++ (FSHashMap*)hashMap;
+
+- (id)objectForKey:(FSHashKey)key;
+- (void)setObject:(id)object forKey:(FSHashKey)key;
+
+- (void)removeObjectForKey:(FSHashKey)key;
+- (void)removeAllObjects;
+
+- (int)count;
+- (NSArray*)allObjects;
+
+@end

@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSFunction.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-SEP-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,32 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
-
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
+#import <FSExpression.h>
 #import <FSSelection.h>
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSFunction : FSExpression
+{
+}
+
+// Methods you can call in FSFunction
++ (void)registerFunction:(Class)functionClass;
++ (NSArray*)allFunctionNames;
++ (NSArray*)allFunctionNamesInGroup:(NSString*)group;
++ (NSArray*)allGroupNames;
++ (Class)functionClassForName:(NSString*)name;
++ (NSString*)htmlHelpData;
+//+ (NSString*)htmlHelpURL;
+
+// Implemented by subclasses; don't call in FSFunction
++ (NSString*)functionName;
++ (NSString*)functionGroup;
++ (int)numberOfOperands;
++ (FSFunction*)functionWithArguments:(NSArray*)arguments;
+
+@end
+
+@interface FSSimpleFunction : FSFunction
+{
+    FSExpression *_argument;
+}
+@end

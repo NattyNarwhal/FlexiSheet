@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
+//  FSTypes.h
 //  FSCore Framework
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 01-MAY-2002.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,12 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+typedef  const char*   FSHashKey;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+typedef struct _FSkeyset {
+    int         count;         /*" Size if _keys memory "*/
+    id         *keys;          /*" FSKey objects, ordered by header. "*/
+    char       *hashcodeChars; /*" hashcode "*/
+} FSkeyset;
+

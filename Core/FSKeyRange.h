@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSKeyRange.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 05-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -39,18 +39,36 @@
 //  
 
 #import <Foundation/Foundation.h>
-
-#import <FSLog.h>
-#import <FSTable.h>
 #import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@class FSKey, FSTable, FSHeader;
+
+@interface FSKeyRange : NSObject
+{
+    id<FSItem>    _1st;
+    id<FSItem>    _2nd;
+    NSArray      *_keyCache;
+}
+
++ (FSKeyRange*)keyRangeFromItem:(id<FSItem>)first toItem:(id<FSItem>)second;
++ (FSKeyRange*)keyRangeWithRange:(NSRange)range inGroup:(FSKeyGroup*)group;
+
+// Accessors
+- (FSTable*)table;
+- (FSHeader*)header;
+- (FSKeyGroup*)group;
+- (NSString*)creatorString;
+
+// Range
+- (NSRange)indexRange;
+- (NSRange)keyIndexRange;
+- (NSArray*)keysInRange;
+- (NSArray*)itemsInRange;
+
+// Query
+- (BOOL)isSingleItem;
+- (id<FSItem>)singleItem;
+- (BOOL)isAtTop;
+- (BOOL)isAtBottom;
+
+@end

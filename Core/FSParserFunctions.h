@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSParserFunctions.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 08-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -40,17 +40,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+// Split functions
+NSArray* FSSplitStringByColons(NSString* strg);
+NSArray* FSSplitStringByDoubleColons(NSString* strg);
+NSArray* FSSplitStringByDots(NSString* strg);
+NSArray* FSSplitStringByDoubleDots(NSString* strg);
+NSArray* FSSplitStringByCommas(NSString* strg);
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+BOOL FSScanDoubleFromString(NSString* strg, double *result);

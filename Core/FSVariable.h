@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSVariable.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-SEP-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,34 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import <FSExpression.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSTable, FSKey, FSKeyGroup, FSSelection;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+#define FS_FIRST -2
+#define FS_PREV  -1
+#define FS_THIS   0
+#define FS_NEXT   1
+#define FS_LAST   2
+
+@interface FSVariable : FSExpression {
+    FSTable            *_table;   /*" Only set on cross-table selection "*/
+    FSKeyGroup         *_rGroup;
+    int                 _recSpc;
+    int                 _recSpcOffset;
+    NSArray            *_one;
+    NSArray            *_two;
+}
+
++ (FSExpression*)variableWithCreator:(NSString*)creator inTable:(FSTable*)table;
+
+- (FSSelection*)selection;
+
+- (BOOL)isFromDifferentTable;
+
+- (BOOL)isRange;
+
+- (BOOL)isRecurrence;
+- (FSKeyGroup*)recurrenceGroup;
+
+@end

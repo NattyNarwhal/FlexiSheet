@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSGlobalHeader.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 19-OCT-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -40,17 +40,22 @@
 
 #import <Foundation/Foundation.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSTable, FSHeader;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSGlobalHeader : NSObject
+{
+    NSMutableArray         *_headers;
+    BOOL                    _propagating;
+}
+
+// Changing the header group
+- (void)addHeader:(FSHeader*)header;
+- (void)removeHeader:(FSHeader*)header;
+
+// Link lookup
+- (FSHeader*)linkedHeaderInTable:(FSTable*)table;
+
+@end
+
+
+extern NSString     *FSHeaderDidChangeNotification;

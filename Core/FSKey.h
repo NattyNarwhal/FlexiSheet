@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSKey.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 29-JAN-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -39,18 +39,22 @@
 //  
 
 #import <Foundation/Foundation.h>
-
-#import <FSLog.h>
-#import <FSTable.h>
 #import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSKey : NSObject <FSItem> {
+    FSKeyGroup     *_group;     /*" Group is not retained by key "*/
+    NSString       *_label;
+    NSString       *_fullPath;  /*" the full path [groupname.]label"*/
+}
+
++ (FSKey*)keyWithLabel:(NSString*)label forGroup:(FSKeyGroup*)group;
+
+- (id)initWithGroup:(FSKeyGroup*)group;
+
+@end
+
+@interface FSKey (Archiving)
+
+- (NSDictionary*)dictionaryForArchiving;
+
+@end

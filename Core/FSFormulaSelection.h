@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSFormulaSelection.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-SEP-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -39,18 +39,26 @@
 //  
 
 #import <Foundation/Foundation.h>
-
-#import <FSLog.h>
-#import <FSTable.h>
 #import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@class FSTable, FSHeader, FSKeySet, FSVariable;
+
+@interface FSFormulaSelection : NSObject
+{
+    FSTable         *_table;
+    NSString        *_creator;
+    id<FSItem>       _inItem;
+    FSVariable      *_selection;
+}
+
++ (FSFormulaSelection*)formulaSelectionWithString:(NSString*)selectionString inTable:(FSTable*)table;
+- (id)initWithString:(NSString*)selectionString inTable:(FSTable*)table;
+
+- (BOOL)hasError;
+- (NSString*)errorString;
+
+- (NSArray*)selectedKeySets;
+
+- (NSString*)creatorString;
+
+@end

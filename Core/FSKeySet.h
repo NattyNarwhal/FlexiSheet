@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSKeySet.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 30-JAN-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,19 +38,70 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import <Foundation/Foundation.h>
+#import <FSCore/FSTypes.h>
 
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
-#import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
+@class FSValue, FSKey, FSKeyGroup, FSHeader, FSTable;
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+
+@interface FSKeySet : NSObject {
+    @public
+    FSkeyset          _data;
+
+    @private
+        FSTable          *_cachedTable;
+    NSArray          *_cachedAllKeys;
+}
+
+// Creating and building FSKeySet objects
++ (FSKeySet*)keySet;
++ (FSKeySet*)keySet:(FSkeyset*)keyset;
++ (FSKeySet*)keySetWithKey:(FSKey*)key;
++ (FSKeySet*)keySetWithKeys:(NSArray*)keys;
+
++ (FSKeySet*)keySetWithKeys:(NSDictionary*)keys inTable:(FSTable*)table;
+
+- (void)addKey:(FSKey*)aKey;
+- (void)addKeys:(FSKeySet*)keys;
+- (void)addKeysFromArray:(NSArray*)keys;
+
+- (void)copyKeys:(FSKeySet*)otherSet;
+
+- (FSKeySet*)setByAddingKey:(FSKey*)aKey;
+- (FSKeySet*)setBySubstitutingKey:(FSKey*)aKey;
+- (FSKeySet*)setBySubstitutingKeys:(FSKeySet*)keySet;
+- (FSKeySet*)setByAddingKeys:(FSKeySet*)otherKeys;
+
+// Attributes
+- (BOOL)isValid;
+- (BOOL)isComplete;
+- (FSHashKey)hashcode;
+- (unsigned)count;
+- (NSEnumerator*)objectEnumerator;
+
+// Convenience methods
+- (FSTable*)table;
+- (FSKey*)keyForHeader:(FSHeader*)header;
+- (FSKey*)keyForGroup:(FSKeyGroup*)group;
+- (FSValue*)value;
+
+// Misc
+- (NSString*)description;
+- (FSKeySet*)setInLinkedTable:(FSTable*)table;
+
+@end
+
+@interface FSKeySet (Archiving)
+
+- (NSDictionary*)dictionaryForArchiving;
+
+@end
+
+//
+// FSkeyset functions
+//
+
+void FSkeysetAddKey(FSkeyset *ks, FSKey *key);
+void FSkeysetCopyKeys(FSkeyset *ks, FSkeyset *otherSet);
+void FSkeysetRevalidate(FSkeyset *ks);
+void FSkeysetGenerateHashcode(FSkeyset *ks);
+void FSkeysetDealloc(FSkeyset *ks);

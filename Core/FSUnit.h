@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSCore.h
-//  FSCore Framework
+//  FSUnit.h
+//  FlexiSheet
 //
-//  Created by Stefan Leuker on 05-SEP-2001.
+//  Created by Stefan Leuker on 23-AUG-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -39,18 +39,18 @@
 //  
 
 #import <Foundation/Foundation.h>
-
-#import <FSLog.h>
-#import <FSTable.h>
-#import <FSKeyGroup.h>
-#import <FSGlobalHeader.h>
-#import <FSHeader.h>
-#import <FSKey.h>
-#import <FSKeyRange.h>
-#import <FSKeySet.h>
 #import <FSValue.h>
-#import <FSUnit.h>
-#import <FSSelection.h>
 
-#import <FSFormula.h>
-#import <FSFormulaSpace.h>
+@interface FSUnit : NSObject {
+
+@private
+    NSString       *name;               /*" The (english) name for this unit. "*/
+    NSDictionary   *conversionTable;    /*" Possible ways to transform values. "*/
+    
+}
+
+@end
+
+@interface FSValue (UnitSupport)
+
+@end
