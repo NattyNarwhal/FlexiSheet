@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  HashMapTest.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 30-APR-2002.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,82 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "HashMapTest.h"
+#import <FSHashMap.h>
 
-static int linelength = 0;
+@implementation HashMapTest
 
-@implementation FSTestObserver
-
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+- (void)setUp
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
+    map = [[FSHashMap alloc] init];
+    [map setObject:@"this" forKey:"this"];
+    [map setObject:@"that" forKey:"that"];
+    [map setObject:@"one"  forKey:"1"];
+    [map setObject:@"twos" forKey:"2222222222"];
+}
+
+- (void)tearDown
+{
+    [map release];
+    map = nil;
+}
+
+//
+//
+//
+
+- (void)testReturnsNilForUnboundKey
+{
+    FSHashMap *mymap = [FSHashMap hashMap];
+
+    [self assertNil:[mymap objectForKey:"00000000"]];
+}
+
+
+- (void)testReturnsCorrectObject
+{
+    NSDictionary  *someObject = [NSDictionary dictionary];
+    FSHashKey      key = "00000000";
+
+    [self assertTrue:([[map allObjects] count] == 4)];
+    
+    [map setObject:someObject forKey:key];
+
+    [self assertTrue:([[map allObjects] count] == 5)];
+
+    [self assertNotNil:[map objectForKey:key]];
+
+    [self assert:[map objectForKey:"1"] equals:@"one"];
+}
+
+
+- (void)testDeletionWorks
+{
+    FSHashKey key = "1";
+    
+    [self assertTrue:([[map allObjects] count] == 4)];
+    [self assert:[map objectForKey:key] equals:@"one"];
+    [map removeObjectForKey:key];
+    [self assertNil:[map objectForKey:key]];
+    [self assertTrue:([[map allObjects] count] == 3)];
+}
+
+
+- (void)testPerformance
+{
+    int       i;
+    char      key[33];
+    NSString *value =  [NSMutableString stringWithString:@"bla"];
+
+    for (i = 0; i < 2000; i++) {
+        sprintf(key, "%16lX", random());
+        [map setObject:value forKey:key];
     }
-}
 
+    //printf("[Elements in hashmap: %i]", [map count]);
 
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
-{
-}
-
-
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
-{
-}
-
-
-+ (void) testCaseDidFail:(NSNotification *) aNotification
-{
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    [map removeAllObjects];
+    [self assertTrue:([map count] == 0)];
 }
 
 @end

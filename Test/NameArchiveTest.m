@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  NameArchiveTest.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 22-JUN-2002.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,51 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "NameArchiveTest.h"
 
-static int linelength = 0;
 
-@implementation FSTestObserver
+@implementation NameArchiveTest
 
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+// Closure
+
+- (void)setUp
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
-    }
+    document = [[FSTestDocument setupSingleTableExample] retain];
+    table = [[document tableWithName:@"Table"] retain];
 }
 
-
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
+- (void)tearDown
 {
+    [table release];
+    table = nil;
+    [document release];
+    document = nil;
 }
 
+// tests
 
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
+- (void)testSingleQuoteInName
 {
-}
+    // Get object references
+    FSHeader     *h1 = [[table headers] objectAtIndex:0];
+    FSHeader     *h2 = [[table headers] objectAtIndex:1];
+    FSKey        *k1 = [[h1 keys] objectAtIndex:0];
+    FSKey        *k2 = [[h2 keys] objectAtIndex:0];
+    NSDictionary *archive;
+    FSTable      *newTable;
 
+    // Rename an item to something difficult
+    [k1 setLabel:@"John \"Terminator\" Connor's Dog"];
+    [k2 setLabel:@"Dog's Name..."];
+    
+    // Store a value
+    [table setValue:[NSString stringWithString:@"Wolfi"]
+          forKeySet:[FSKeySet keySetWithKeys:[NSArray arrayWithObjects:k1, k2, nil]]];
 
-+ (void) testCaseDidFail:(NSNotification *) aNotification
-{
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    archive = [table dictionaryForArchiving];
+
+    newTable = [[FSTable alloc] init];
+    [newTable loadFromDictionary:archive];
 }
 
 @end

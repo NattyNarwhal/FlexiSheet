@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  LinkedCategoriesTest.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 14-MAR-2003.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,55 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "LinkedCategoriesTest.h"
 
-static int linelength = 0;
+@implementation LinkedCategoriesTest
 
-@implementation FSTestObserver
-
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+- (void)setUp
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
-    }
+    document = [[FSTestDocument setupLinkedTableExample] retain];
+    table = [document tableWithName:@"Table"];
+    clone = [document tableWithName:@"Clone"];
+    groupA = [table headerWithName:@"Linked"];
+    groupB = [table headerWithName:@"B"];
+    linkedHeader = [clone headerWithName:@"Linked"];
 }
 
-
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
+- (void)tearDown
 {
+    table = nil;
+    clone = nil;
+    groupA = nil;
+    groupB = nil;
+    linkedHeader = nil;
+    [document release];
+    document = nil;
 }
 
-
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
+- (void)testBasicLinkingWorks
 {
+    [groupA setLabel:@"Test"];
+    [self assert:[linkedHeader label] equals:@"Test"];
+    [groupA appendKeyWithLabel:@"TestLabel"];
+    [self assertNotNil:[linkedHeader keyWithLabel:@"TestLabel"]];
 }
 
-
-+ (void) testCaseDidFail:(NSNotification *) aNotification
+- (void)testGroupsInLinkedHeaders
 {
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    FSKeyGroup *testGroupA;
+    FSKeyGroup *testGroupLinked;
+    NSRange groupRange = NSMakeRange(0,2);
+    int gAKeyCount = [[groupA items] count];
+    [self assertInt:gAKeyCount equals:[[linkedHeader items] count]];
+    testGroupA = [groupA groupItemsInRange:groupRange withLabel:@"TestGroup"];
+    testGroupLinked = [linkedHeader itemWithLabel:@"TestGroup"];
+    [self assertNotNil:testGroupLinked];
+    // now modify the new group
+    [testGroupA appendKeyWithLabel:@"NEW"];
+    [self assertNotNil:[testGroupLinked keyWithLabel:@"NEW"]];
+    // group rename
+    [testGroupA setLabel:@"CHANGED"];
+    [self assert:[testGroupLinked label] equals:@"CHANGED"];
 }
 
 @end

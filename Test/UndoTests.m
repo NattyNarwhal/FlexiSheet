@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  UndoTests.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 09-NOV-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,41 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "UndoTests.h"
 
-static int linelength = 0;
+@implementation UndoTests
 
-@implementation FSTestObserver
+// Closure
 
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+- (void)setUp
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
-    }
+    document = [[FSTestDocument setupSingleTableExample] retain];
+    group = [[[document tableWithName:@"Table"] headerWithName:@"A"] retain];
 }
 
-
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
+- (void)tearDown
 {
+    [group release];
+    group = nil;
+    [document release];
+    document = nil;
 }
 
+// tests
 
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
+- (void)testSetup
 {
+    [self assertNotNil:document message:@"Document does not exist."];
+    [self assertNotNil:group message:@"Document doesn't have the default test group."];
+    [self assertInt:[[document tables] count] equals:1 message:@"Document should have exactly one table."];
 }
 
-
-+ (void) testCaseDidFail:(NSNotification *) aNotification
+- (void)testInsertUndo
 {
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    [group insertKeyWithLabel:@"TestLabel" atIndex:2];
+    [self assertInt:[[group items] count] equals:4 message:@"Insert didn't work."];
+    [[[group table] undoManager] undo];
+    [self assertInt:[[group items] count] equals:3 message:@"Undo didn't work."];
 }
 
 @end

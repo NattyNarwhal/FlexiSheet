@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  SortingTests.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 27-APR-2002.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,56 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "SortingTests.h"
 
-static int linelength = 0;
 
-@implementation FSTestObserver
+@implementation SortingTests
 
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+// Closure
+
+- (void)setUp
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
-    }
+    document = [[FSTestDocument setupSingleTableExample] retain];
+    header = [[[document tableWithName:@"Table"] headerWithName:@"A"] retain];
+    [header setLabel:@"TestLabel"];
+    zzz = [header appendKeyWithLabel:@"ZZZ"];
+    ccc1 = [header appendKeyWithLabel:@"ccc1"];
+    ccc2 = [header appendKeyWithLabel:@"CcC2"];
+    ddd = [header appendKeyWithLabel:@"DDD"];
 }
 
-
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
+- (void)tearDown
 {
+    [header release];
+    header = nil;
+    [document release];
+    document = nil;
 }
 
+// tests
 
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
+- (void)testItemSorting
 {
+    NSArray *items;
+    
+    [header sortItemsByName];
+
+    items = [header items];
+    [self assert:[[items lastObject] label] equals:@"ZZZ"];
+    [self assertTrue:([items indexOfObject:ccc1] < [items indexOfObject:ccc2])];
+    [self assertTrue:([items indexOfObject:zzz] > [items indexOfObject:ddd])];
 }
 
-
-+ (void) testCaseDidFail:(NSNotification *) aNotification
+- (void)testReverseItemSorting
 {
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    NSArray *items;
+    
+    [header sortItemsByName:NO];
+
+    items = [header items];
+    [self assert:[[items lastObject] label] equals:@"A1"];
+    [self assertFalse:([items indexOfObject:ccc1] < [items indexOfObject:ccc2])];
+    [self assertTrue:([items indexOfObject:ddd] > [items indexOfObject:zzz])];
 }
 
 @end

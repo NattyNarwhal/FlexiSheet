@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  ItemGroupTest.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 09-NOV-2001.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,44 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "ItemGroupTest.h"
 
-static int linelength = 0;
+@implementation ItemGroupTest
 
-@implementation FSTestObserver
+// Closure
 
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+- (void)setUp
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
-    }
+    document = [[FSTestDocument setupSingleTableExample] retain];
+    group = [[[document tableWithName:@"Table"] headerWithName:@"A"] retain];
+    [group setLabel:@"TestLabel"];
 }
 
-
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
+- (void)tearDown
 {
+    [group release];
+    group = nil;
+    [document release];
+    document = nil;
 }
 
+// tests
 
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
+- (void)testLabel
 {
+    [self assert:[group label] equals:@"TestLabel" message:@"Group's label is incorrect."];
 }
 
-
-+ (void) testCaseDidFail:(NSNotification *) aNotification
+- (void)testItemInsertion
 {
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    [self assertInt:[[group items] count] equals:3 message:@"Group's item count is incorrect."];
+    [group insertKeyWithLabel:@"New Label" atIndex:1];
+    [self assertNotNil:[group itemWithLabel:@"New Label"]];
+    [self assertInt:[[group items] count] equals:4 message:@"Group's item count is incorrect."];
+}
+
+- (void)testItemAutomaticRename
+{
 }
 
 @end

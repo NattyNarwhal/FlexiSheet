@@ -1,9 +1,9 @@
 //  $Id$
 //
-//  FSTestObserver.m
+//  GroupFunctionsTests.m
 //  FlexiSheet
 //
-//  Created by Stefan Leuker on 02-DEC-2001.
+//  Created by Stefan Leuker on 10-MAY-2002.
 //
 //  Copyright (c) 2001-2004, Stefan Leuker.        All rights reserved.
 //  
@@ -38,49 +38,63 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //  
 
-#import "FSTestObserver.h"
-#import <FSCore/FSLog.h>
+#import "GroupFunctionsTests.h"
 
-static int linelength = 0;
+@implementation GroupFunctionsTests
 
-@implementation FSTestObserver
-
-+ (void) testCaseDidStop:(NSNotification *) aNotification
+- (void)testCount
 {
-    SenTestRun *run = [aNotification run];
-    if ([run hasSucceeded]) {
-        fprintf (stdout, ".");
-        fflush (stdout);
-        if (linelength++ == 40) {
-            fprintf (stdout, "\n");
-            linelength = 0;
-        }
-    } else {
-        fprintf (stdout, "\n");
-        [FSLog logInfo:@"Test Case '%@' failed (%.3f seconds).", [run test], [run totalDuration]];
-    }
+    [table addFormula:@"A1:B3 = count(B)"];
+    [table recalculateFormulaSpace];
+
+    [self assertInt:[[a1b3 value] intValue] equals:3];
 }
 
-
-+ (void) testSuiteDidStart:(NSNotification *) aNotification
+- (void)testGroupSum
 {
+    [table addFormula:@"B3 = groupsum(B)"];
+
+    [table recalculateFormulaSpace];
+    [self assertInt:[[a3b3 value] intValue] equals:2];
+
+    [table recalculateFormulaSpace];
+    [self assertInt:[[a3b3 value] intValue] equals:2];
 }
 
-
-+ (void) testSuiteDidStop:(NSNotification *) aNotification
+- (void)testSum
 {
+    [table addFormula:@"A1:B3 = sum(A3:B)"];
+    [[a3b1 value] setValue:@"7"];
+    [[a3b2 value] setValue:@"14"];
+    [[a3b3 value] setValue:@"21"];
+
+    [table recalculateFormulaSpace];
+    [self assertInt:[[a1b3 value] intValue] equals:42];
+
+    [table recalculateFormulaSpace];
+    [self assertInt:[[a1b3 value] intValue] equals:42];
 }
 
-
-+ (void) testCaseDidFail:(NSNotification *) aNotification
+- (void)testProduct
 {
-    NSException *exception = [aNotification exception];
-    fprintf (stdout, "\n");
-    [FSLog logInfo:@"%@:%@: %@ : %@",
-        [exception filePathInProject],
-        [exception lineNumber],
-        [aNotification test],
-        [exception reason]];
+    [table addFormula:@"A1:B3 = prod(A3:B)"];
+    [[a3b1 value] setValue:@"3"];
+    [[a3b2 value] setValue:@"2.5"];
+    [[a3b3 value] setValue:@"2"];
+
+    [table recalculateFormulaSpace];
+    [self assertFloat:[[a1b3 value] doubleValue] equals:15 precision:0];
+}
+
+- (void)testAverage
+{
+    [table addFormula:@"A1:B3 = avg(A3:B)"];
+    [[a3b1 value] setValue:@"3"];
+    [[a3b2 value] setValue:@"7"];
+    [[a3b3 value] setValue:@"2"];
+
+    [table recalculateFormulaSpace];
+    [self assertFloat:[[a1b3 value] doubleValue] equals:4 precision:0];
 }
 
 @end
